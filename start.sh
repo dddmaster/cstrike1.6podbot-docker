@@ -2,31 +2,31 @@
 
 #verify all required envs are set or set fallback values
 check_and_fix_env() {
-	if [[ -z $(UID) ]]; then
+	if [[ -z ${UID} ]]; then
 		UID=99;
 	fi
 	
-	if [[ -z $(GID) ]]; then
+	if [[ -z ${GID} ]]; then
 		GID=100;
 	fi
 	
-	if [[ -z $(USER) ]]; then
+	if [[ -z ${USER} ]]; then
 		USER="steam";
 	fi
 	
-	if [[ -z $(GAME_PORT) ]]; then
+	if [[ -z ${GAME_PORT} ]]; then
 		GAME_PORT="27015";
 	fi
 	
-	if [[ -z $(GAME_NAME) ]]; then
+	if [[ -z ${GAME_NAME} ]]; then
 		GAME_NAME="cstrike";
 	fi
 	
-	if [[ -z $(GAME_ID) ]]; then
+	if [[ -z ${GAME_ID} ]]; then
 		GAME_ID="90";
 	fi
 	
-	if [[ -z $(GAME_PARAMS) ]]; then
+	if [[ -z ${GAME_PARAMS} ]]; then
 		GAME_PARAMS="+maxplayers 32 +map de_dust";
 	fi
 	
