@@ -1,0 +1,14 @@
+#cstrike:amxmodx
+#cstrike:amxmodx-internal-1.0.0
+#cstrike:amxmodx-latest
+#cstrike:amxmodx-1.9.0-git5294
+FROM dddmaster/cstrike:metamod-internal-1.0.0
+
+ARG AMXMODX_VERSION="1.9.0-git5294"
+
+
+# install amxmodx
+RUN curl -sqL "https://www.amxmodx.org/amxxdrop/1.9/amxmodx-${AMXMODX_VERSION}-base-linux.tar.gz" | tar zxf - -C /hlds/cstrike && \
+    curl -sqL "https://www.amxmodx.org/amxxdrop/1.9/amxmodx-${AMXMODX_VERSION}-cstrike-linux.tar.gz" | tar zxf - -C /hlds/cstrike && \
+    echo "linux addons/amxmodx/dlls/amxmodx_mm_i386.so" >> /hlds/cstrike/addons/metamod/plugins.ini && \
+    echo "\"$ADMIN_STEAM_ID\" \"\" \"abcdefghijklmnopqrstu\" \"ce\" ; Server admin added during container build" >> /hlds/cstrike/addons/amxmodx/configs/users.ini

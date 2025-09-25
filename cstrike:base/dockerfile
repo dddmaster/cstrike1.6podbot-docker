@@ -1,0 +1,54 @@
+#cstrike:internal-1.0.0
+#cstrike:latest
+#cstrike:base
+
+FROM debian:buster-slim
+
+# labels
+ARG BUILD_DATE
+ARG VCS_REF
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vcs-url="https://github.com/dddmaster/cstrike1.6podbot-docker"
+
+ARG MOTD_FILE="https://raw.githubusercontent.com/dddmaster/cstrike1.6podbot-docker/refs/heads/main/example/motd.txt"
+ARG MAPCYCLE="de_aztec,cs_italy,de_dust"
+
+# define default env variables
+ARG ADMIN_STEAM_ID="STEAM_0:0:123456"
+ENV SERVER_NAME="Counter-Strike 1.6 DockerServer"
+ENV PORT=27015
+ENV MAP=de_dust
+ENV MAXPLAYERS=16
+ENV SV_LAN=1
+
+
+# install dependencies
+# dependency fix: https://unix.stackexchange.com/a/743863
+RUN sed -i s/deb.debian.org/archive.debian.org/g /etc/apt/sources.list && \
+    dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get -qqy install lib32gcc1 lib32stdc++6 curl wget xz-utils && \
+	apt-get -y install curl:i386 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY --from=dddmaster/cstrike:scratch-internal-1.0.0 /root /root
+COPY --from=dddmaster/cstrike:scratch-internal-1.0.0 /hlds /hlds
+
+
+# change server name
+RUN sed -i "s/hostname \"Counter-Strike 1.6 Server\"/hostname \"$SERVER_NAME\"/" /hlds/cstrike/server.cfg
+
+# overwrite mapcycle.txt if MAPCYCLE is not empty
+RUN if [ -n "$MAPCYCLE" ]; then echo "$MAPCYCLE" | tr ',' '\n' > /hlds/cstrike/mapcycle.txt; fi
+
+# overwrite motd.txt if MOTD_FILE is not empty
+RUN if [ -n "$MOTD_FILE" ]; then curl -sql "${MOTD_FILE}" > /hlds/cstrike/motd.txt; fi
+
+RUN cd /hlds/ && \
+	du -h
+
+# start server
+WORKDIR /hlds
+ENTRYPOINT ./hlds_run -game cstrike -strictportbind -ip 0.0.0.0 -port $PORT +sv_lan $SV_LAN +map $MAP -maxplayers $MAXPLAYERS

@@ -1,0 +1,15 @@
+#cstrike:yapb
+#cstrike:yapb-internal-1.0
+#cstrike:yapb-latest
+#cstrike:yapb-4.4.957
+FROM dddmaster/cstrike:metamod-internal-1.0.0
+
+ARG YAPB_VERSION="4.4.957"
+ENV BOT_PASSWORD="bad_password"
+
+# install podbot
+RUN wget "https://github.com/yapb/yapb/releases/download/${YAPB_VERSION}/yapb-${YAPB_VERSION}-linux.tar.xz" && \
+	tar -xf yapb-${YAPB_VERSION}-linux.tar.xz -C /hlds/cstrike && \
+	echo "linux addons/yapb/bin/yapb.so" >> /hlds/cstrike/addons/metamod/plugins.ini && \
+	sed -i 's/yb_password ""/yb_password "${BOT_PASSWORD}"/' /hlds/cstrike/addons/yapb/conf/yapb.cfg && \
+	rm yapb-${YAPB_VERSION}-linux.tar.xz

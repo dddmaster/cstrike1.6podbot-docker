@@ -1,0 +1,75 @@
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push]
+jobs:
+  Build-docker:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the code
+        - name: Checkout code
+          uses: actions/checkout@v5
+          with:
+            fetch-depth: 0 # Do not get extra git branches to save time
+        - name: build scratch
+          uses: docker/build-push-action@v6
+          with:
+            push: false
+            tags: |
+              dddmaster/cstrike:scratch
+              dddmaster/cstrike:scratch-latest
+              dddmaster/cstrike:scratch-internal-1.0.0
+            context: .
+            file: ./cstrike:scratch/dockerfile
+        - name: build base
+          uses: docker/build-push-action@v6
+          with:
+            push: false
+            tags: | 
+              dddmaster/cstrike:base
+              dddmaster/cstrike:base-latest
+              dddmaster/cstrike:base-internal-1.0.0
+            context: .
+            file: ./cstrike:base/dockerfile
+        - name: build meta
+          uses: docker/build-push-action@v6
+          with:
+            push: false
+            tags: | 
+              dddmaster/cstrike:metamod
+              dddmaster/cstrike:metamod-latest
+              dddmaster/cstrike:metamod-internal-1.0.0
+              dddmaster/cstrike:metamod-1.20
+            context: .
+            file: ./cstrike:metamod/dockerfile
+        - name: build yapb
+          uses: docker/build-push-action@v6
+          with:
+            push: false
+            tags: | 
+              dddmaster/cstrike:yapb
+              dddmaster/cstrike:yapb-latest
+              dddmaster/cstrike:yapb-internal-1.0.0
+              dddmaster/cstrike:yapb-4.4.957
+            context: .
+            file: ./cstrike:yapb/dockerfile
+        - name: build amxmodx
+          uses: docker/build-push-action@v6
+          with:
+            push: false
+            tags: | 
+              dddmaster/cstrike:amxmodx
+              dddmaster/cstrike:amxmodx-latest
+              dddmaster/cstrike:amxmodx-internal-1.0.0
+              dddmaster/cstrike:amxmodx-1.9.0-git5294
+            context: .
+            file: ./cstrike:amxmodx/dockerfile
+        - name: build amxmodx yapb 
+          uses: docker/build-push-action@v6
+          with:
+            push: false
+            tags: | 
+              dddmaster/cstrike:yapb.amxmodx
+              dddmaster/cstrike:yapb.amxmodx-latest
+              dddmaster/cstrike:yapb-amxmodx-1.0.0
+            context: .
+            file: ./cstrike:amxmodx.yapb/dockerfile

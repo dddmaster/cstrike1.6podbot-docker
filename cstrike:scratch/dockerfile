@@ -1,0 +1,27 @@
+#cstrike:scratch
+#cstrike:scratch-latest
+#cstrike:scratch-internal-1.0.0
+
+# scratch steam cstrike
+FROM debian:buster-slim
+
+RUN sed -i s/deb.debian.org/archive.debian.org/g /etc/apt/sources.list && \
+    dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get -qqy install lib32gcc1 lib32stdc++6 curl wget xz-utils
+
+
+# create directories, download steamcmd and install CS 1.6 via steamcmd
+#     additional info: https://danielgibbs.co.uk/2017/10/hlds-steamcmd-workaround-appid-90-part-ii/
+#     mirror: https://web.archive.org/web/20221210133352/https://danielgibbs.co.uk/2017/10/hlds-steamcmd-workaround-appid-90-part-ii/
+RUN mkdir /root/Steam /root/.steam && \
+    curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxf - -C /root/Steam && \
+    /root/Steam/steamcmd.sh +login anonymous +force_install_dir "/hlds" +app_update 90 +app_set_config 90 mod cstrike validate +quit || true && \
+    curl -s https://raw.githubusercontent.com/dgibbs64/HLDS-appmanifest/master/CounterStrike/appmanifest_90.acf -o /hlds/steamapps/appmanifest_90.acf && \
+    /root/Steam/steamcmd.sh +login anonymous +force_install_dir "/hlds" +app_update 90 +app_set_config 90 mod cstrike validate +quit
+RUN mkdir -p /root/.steam/sdk32 && \
+	cp -r /root/Steam/linux32/ /root/.steam/sdk32/
+
+FROM scratch
+COPY --from=0 /root /root
+COPY --from=0 /hlds /hlds

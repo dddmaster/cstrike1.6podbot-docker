@@ -1,0 +1,15 @@
+#cstrike:metamod
+#cstrike:metamod-internal-1.0.0
+#cstrike:metamod-latest
+#cstrike:metamod-1.20
+
+#cstrike base plus metamod
+FROM dddmaster/cstrike:base
+
+ARG METAMOD_VERSION="1.20"
+
+# install metamod
+RUN mkdir -p /hlds/cstrike/addons/metamod/dlls && \
+    curl -sqL "http://prdownloads.sourceforge.net/metamod/metamod-${METAMOD_VERSION}-linux.tar.gz" | tar zxf - -C /hlds/cstrike/addons/metamod/dlls && \
+    touch /hlds/cstrike/addons/metamod/plugins.ini && \
+    sed -i 's/gamedll_linux "dlls\/cs.so"/#gamedll_linux "dlls\/cs.so"\ngamedll_linux "addons\/metamod\/dlls\/metamod.so"/'  /hlds/cstrike/liblist.gam

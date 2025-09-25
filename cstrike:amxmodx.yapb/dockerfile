@@ -1,0 +1,10 @@
+#cstrike:yapb.amxmodx
+#cstrike:yapb.amxmodx-latest
+#cstrike:yapb.amxmodx-1.0.0
+FROM dddmaster/cstrike:amxmodx-internal-1.0.0
+
+COPY --from=dddmaster/cstrike:yapb-internal-1.0.0 /hlds/cstrike/addons /hlds/cstrike/addons
+
+RUN echo "linux addons/yapb/bin/yapb.so" >> /hlds/cstrike/addons/metamod/plugins.ini
+RUN ls /hlds/cstrike/addons
+RUN cat /hlds/cstrike/addons/metamod/plugins.ini
